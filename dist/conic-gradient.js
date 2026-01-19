@@ -6,7 +6,28 @@ const color_utils_1 = require("./color-utils");
 function createConicGradient(baseColor, options) {
     const { fromAngle = 0, position = '50% 50%', fallbackColor = '#f5e477', colors: customColors, hueRotation = false, steps = 8, offsetPercent = 20, } = options || {};
     if (customColors && customColors.length > 0) {
-        const colorsStr = customColors.map(colorItem => colorItem.color).join(', ');
+        function colorStopToString(item) {
+            let colorStr = item.color;
+            if (typeof item.opacity === 'number') {
+                if (item.opacity === 0) {
+                    colorStr = 'transparent';
+                }
+                else {
+                    const type = (0, color_utils_1.getColorType)(item.color);
+                    if (type === 'hex') {
+                        colorStr = (0, color_utils_1.hexToRgba)(item.color, item.opacity);
+                    }
+                    else if (type === 'rgb') {
+                        colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+                    }
+                    else {
+                        colorStr = item.color;
+                    }
+                }
+            }
+            return item.position !== undefined ? `${colorStr} ${item.position}` : colorStr;
+        }
+        const colorsStr = customColors.map(colorStopToString).join(', ');
         return `conic-gradient(from ${fromAngle}deg at ${position}, ${colorsStr})`;
     }
     const resolvedBaseColor = (0, color_utils_1.isHexColor)(baseColor) ? (0, color_utils_1.normalizeHex)(baseColor) : fallbackColor;

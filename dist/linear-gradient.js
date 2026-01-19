@@ -6,24 +6,29 @@ exports.createMultiStepLinearGradient = createMultiStepLinearGradient;
 function createCustomLinearGradient(stops, options) {
     const { direction = 'to bottom', angle } = options || {};
     const gradientDirection = angle ? `${angle}deg` : direction;
-    const stopsStr = stops
-        .map(s => {
-        let c = s.color;
-        if (typeof s.opacity === 'number' && s.opacity < 1) {
-            // Примитивная поддержка hex → rgba, остальное оставляем как есть
-            if (/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(c)) {
-                const hex = c.length === 4
-                    ? `#${c[1]}${c[1]}${c[2]}${c[2]}${c[3]}${c[3]}`
-                    : c;
-                const r = parseInt(hex.slice(1, 3), 16);
-                const g = parseInt(hex.slice(3, 5), 16);
-                const b = parseInt(hex.slice(5, 7), 16);
-                c = `rgba(${r},${g},${b},${s.opacity})`;
+    function colorStopToString(item) {
+        let colorStr = item.color;
+        if (typeof item.opacity === 'number') {
+            if (item.opacity === 0) {
+                colorStr = 'transparent';
+            }
+            else {
+                const type = (0, color_utils_1.getColorType)(item.color);
+                if (type === 'hex') {
+                    // @ts-ignore
+                    colorStr = (0, color_utils_1.hexToRgba)(item.color, item.opacity);
+                }
+                else if (type === 'rgb') {
+                    colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+                }
+                else {
+                    colorStr = item.color;
+                }
             }
         }
-        return s.position ? `${c} ${s.position}` : c;
-    })
-        .join(', ');
+        return item.position ? `${colorStr} ${item.position}` : colorStr;
+    }
+    const stopsStr = stops.map(colorStopToString).join(', ');
     return `linear-gradient(${gradientDirection}, ${stopsStr})`;
 }
 const color_utils_1 = require("./color-utils");
