@@ -1,4 +1,4 @@
-import { getColorType, isHexColor, normalizeHex, adjustHexBrightness } from './color-utils';
+import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from './color-utils';
 
 export interface RadialGradientOptions {
   offsetPercent?: number;
@@ -39,19 +39,38 @@ export function createRadialGradient(
     layers,
   } = options || {};
 
+  function colorStopToString(item: { color: string; opacity?: number; position?: string }): string {
+    let colorStr = item.color;
+    if (typeof item.opacity === 'number') {
+      if (item.opacity === 0) {
+        colorStr = 'transparent';
+      } else {
+        const type = getColorType(item.color);
+        if (type === 'hex') {
+          colorStr = hexToRgba(item.color, item.opacity);
+        } else if (type === 'rgb') {
+          colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+        } else {
+          colorStr = item.color;
+        }
+      }
+    }
+    return item.position ? `${colorStr} ${item.position}` : colorStr;
+  }
+
   if (layers && layers.length > 0) {
     const layerGradients = layers.map(layer => {
       const layerShape = layer.shape || shape;
       const layerSize = typeof layer.size === 'object' ? `${layer.size.width} ${layer.size.height}` : layer.size || size;
       const layerPosition = layer.position || position;
-      const colorsStr = layer.colors.map(colorItem => colorItem.color).join(', ');
+      const colorsStr = layer.colors.map(colorStopToString).join(', ');
       return `radial-gradient(${layerShape} ${layerSize} at ${layerPosition}, ${colorsStr})`;
     });
     return layerGradients.join(', ');
   }
 
   if (useCustomColors && customColors && customColors.length > 0) {
-    const colorsStr = customColors.map(colorItem => colorItem.color).join(', ');
+    const colorsStr = customColors.map(colorStopToString).join(', ');
     const sizeStr = typeof size === 'object' ? `${size.width} ${size.height}` : size;
     return `radial-gradient(${shape} ${sizeStr} at ${position}, ${colorsStr})`;
   }
