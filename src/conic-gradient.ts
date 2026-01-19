@@ -1,4 +1,4 @@
-import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, rotateHue, hslToHex } from './color-utils';
+import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, rotateHue, hslToHex, hexToRgba } from './color-utils';
 
 export interface ConicGradientOptions {
   fromAngle?: number;
@@ -29,7 +29,25 @@ export function createConicGradient(
   } = options || {};
 
   if (customColors && customColors.length > 0) {
-    const colorsStr = customColors.map(colorItem => colorItem.color).join(', ');
+    function colorStopToString(item: { color: string; opacity?: number; position?: string | number }): string {
+      let colorStr = item.color;
+      if (typeof item.opacity === 'number') {
+        if (item.opacity === 0) {
+          colorStr = 'transparent';
+        } else {
+          const type = getColorType(item.color);
+          if (type === 'hex') {
+            colorStr = hexToRgba(item.color, item.opacity);
+          } else if (type === 'rgb') {
+            colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+          } else {
+            colorStr = item.color;
+          }
+        }
+      }
+      return item.position !== undefined ? `${colorStr} ${item.position}` : colorStr;
+    }
+    const colorsStr = customColors.map(colorStopToString).join(', ');
     return `conic-gradient(from ${fromAngle}deg at ${position}, ${colorsStr})`;
   }
 
