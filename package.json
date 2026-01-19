@@ -1,0 +1,47 @@
+{
+  "name": "css-magic-gradient",
+  "version": "1.0.0",
+  "description": "Generate CSS gradients (linear, radial, conic) with zero dependencies. Vue plugin included.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macrulezru/css-magic-gradient.git"
+  },
+  "homepage": "https://macrulez.ru/#/en",
+  "bugs": {
+    "url": "https://github.com/macrulezru/css-magic-gradient/issues"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "css",
+    "gradient",
+    "linear-gradient",
+    "radial-gradient",
+    "conic-gradient",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/vue": "^1.0.31",
+    "@vue/reactivity": "^3.5.27",
+    "@vue/runtime-core": "^3.5.27",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "vue": "^3.5.27"
+  }
+}
