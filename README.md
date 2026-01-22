@@ -104,23 +104,7 @@ createConicGradient('#f00', {
 })
 ```
 
-### Color Utilities
-
-The package also exports a set of helper utilities for working with colors. Import them from the package, for example: `import { normalizeHex, isHexColor } from 'css-magic-gradient'`.
-
-- **`isCssVariable`**: Check if a string is a CSS variable (e.g. `var(--main)`).
-- **`isHexColor`**: Detect hex color strings (3- or 6-digit, with or without `#`).
-- **`isRgbColor`**: Detect `rgb()` / `rgba()` color strings.
-- **`isHslColor`**: Detect `hsl()` / `hsla()` color strings.
-- **`getColorType`**: Returns the color type: `hex`, `css-var`, `rgb`, `hsl`, `named`, or `unknown`.
-- **`extractCssVariableName`**: Extracts the CSS variable name from `var(--name)`.
-- **`normalizeHex`**: Normalizes and validates hex strings, returns a 6-digit lowercase hex (fallback `#f5e477`).
-- **`hexToRgb`**: Convert a hex color to an `[r, g, b]` tuple.
-- **`hexToRgba`**: Convert a hex color to an `rgba(...)` string with opacity.
-- **`hexToHsl`**: Convert a hex color to an `[h, s, l]` tuple.
-- **`hslToHex`**: Convert HSL values to a hex color string.
-- **`adjustHexBrightness`**: Lighten or darken a hex color by a percentage offset.
-- **`rotateHue`**: Rotate the hue of a hex color by degrees.
+<!-- Color utilities are provided by the external package `color-value-tools` and are no longer exported from this package. -->
 
 ## Vue 3 Plugin & Reactive Hooks
 

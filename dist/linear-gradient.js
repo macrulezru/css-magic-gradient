@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createLinearGradient = createLinearGradient;
 exports.createMultiStepLinearGradient = createMultiStepLinearGradient;
-const color_utils_1 = require("./color-utils");
+const color_value_tools_1 = require("color-value-tools");
 function createLinearGradient(first, options) {
     // If first arg is an array, behave like old createCustomLinearGradient
     if (Array.isArray(first)) {
@@ -16,9 +16,9 @@ function createLinearGradient(first, options) {
                     colorStr = 'transparent';
                 }
                 else {
-                    const type = (0, color_utils_1.getColorType)(item.color);
+                    const type = (0, color_value_tools_1.getColorType)(item.color);
                     if (type === 'hex') {
-                        colorStr = (0, color_utils_1.hexToRgba)(item.color, item.opacity);
+                        colorStr = (0, color_value_tools_1.hexToRgba)(item.color, item.opacity);
                     }
                     else if (type === 'rgb') {
                         colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
@@ -36,21 +36,21 @@ function createLinearGradient(first, options) {
     // Otherwise behave like the original createLinearGradient(baseColor, options)
     const baseColor = first;
     const { offsetPercent = 15, direction = 'to bottom', angle, fallbackColor = '#f5e477', } = options || {};
-    const colorType = (0, color_utils_1.getColorType)(baseColor);
+    const colorType = (0, color_value_tools_1.getColorType)(baseColor);
     let colorValue;
     let adjustedColor;
     if (colorType === 'css-var') {
-        const varName = (0, color_utils_1.extractCssVariableName)(baseColor);
+        const varName = (0, color_value_tools_1.extractCssVariableName)(baseColor);
         colorValue = `var(${varName}, ${fallbackColor})`;
-        adjustedColor = (0, color_utils_1.adjustHexBrightness)(fallbackColor, offsetPercent);
+        adjustedColor = (0, color_value_tools_1.adjustHexBrightness)(fallbackColor, offsetPercent);
     }
     else if (colorType === 'hex') {
-        colorValue = (0, color_utils_1.normalizeHex)(baseColor);
-        adjustedColor = (0, color_utils_1.adjustHexBrightness)(colorValue, offsetPercent);
+        colorValue = (0, color_value_tools_1.normalizeHex)(baseColor);
+        adjustedColor = (0, color_value_tools_1.adjustHexBrightness)(colorValue, offsetPercent);
     }
     else {
         colorValue = fallbackColor;
-        adjustedColor = (0, color_utils_1.adjustHexBrightness)(fallbackColor, offsetPercent);
+        adjustedColor = (0, color_value_tools_1.adjustHexBrightness)(fallbackColor, offsetPercent);
     }
     const startColor = adjustedColor;
     const endColor = colorValue;
@@ -59,13 +59,13 @@ function createLinearGradient(first, options) {
 }
 function createMultiStepLinearGradient(baseColor, steps = 3, options) {
     const { offsetPercent = 15, direction = 'to bottom', angle, fallbackColor = '#f5e477', } = options || {};
-    const colorType = (0, color_utils_1.getColorType)(baseColor);
+    const colorType = (0, color_value_tools_1.getColorType)(baseColor);
     let colorValue;
     if (colorType === 'css-var') {
         colorValue = fallbackColor;
     }
     else if (colorType === 'hex') {
-        colorValue = (0, color_utils_1.normalizeHex)(baseColor);
+        colorValue = (0, color_value_tools_1.normalizeHex)(baseColor);
     }
     else {
         colorValue = fallbackColor;
@@ -73,7 +73,7 @@ function createMultiStepLinearGradient(baseColor, steps = 3, options) {
     const colors = [];
     for (let i = 0; i < steps; i++) {
         const percent = offsetPercent * (1 - i / (steps - 1));
-        const color = (0, color_utils_1.adjustHexBrightness)(colorValue, percent);
+        const color = (0, color_value_tools_1.adjustHexBrightness)(colorValue, percent);
         colors.push(color);
     }
     const gradientDirection = angle ? `${angle}deg` : direction;

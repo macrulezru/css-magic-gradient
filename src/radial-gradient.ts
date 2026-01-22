@@ -1,4 +1,4 @@
-import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from './color-utils';
+import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from 'color-value-tools';
 
 export interface RadialGradientOptions {
   offsetPercent?: number;

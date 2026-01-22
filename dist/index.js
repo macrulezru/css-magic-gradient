@@ -18,7 +18,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VueGradientPlugin = exports.useConicGradient = exports.useRadialGradient = exports.useLinearGradient = void 0;
-__exportStar(require("./color-utils"), exports);
 __exportStar(require("./linear-gradient"), exports);
 __exportStar(require("./radial-gradient"), exports);
 __exportStar(require("./conic-gradient"), exports);
