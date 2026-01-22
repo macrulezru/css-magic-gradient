@@ -4,7 +4,7 @@ exports.createLinearGradient = createLinearGradient;
 exports.createMultiStepLinearGradient = createMultiStepLinearGradient;
 const color_utils_1 = require("./color-utils");
 function createLinearGradient(first, options) {
-    // array form: custom stops
+    // If first arg is an array, behave like old createCustomLinearGradient
     if (Array.isArray(first)) {
         const stops = first;
         const { direction = 'to bottom', angle } = options || {};
@@ -33,6 +33,7 @@ function createLinearGradient(first, options) {
         const stopsStr = stops.map(colorStopToString).join(', ');
         return `linear-gradient(${gradientDirection}, ${stopsStr})`;
     }
+    // Otherwise behave like the original createLinearGradient(baseColor, options)
     const baseColor = first;
     const { offsetPercent = 15, direction = 'to bottom', angle, fallbackColor = '#f5e477', } = options || {};
     const colorType = (0, color_utils_1.getColorType)(baseColor);
