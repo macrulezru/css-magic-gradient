@@ -13,8 +13,7 @@ export interface GradientOptions {
     angle?: number;
     fallbackColor?: string;
 }
-export declare function createLinearGradient(baseColor: string, options?: GradientOptions): string;
-export declare function createLinearGradient(stops: LinearGradientColorStop[], options?: CustomLinearGradientOptions): string;
+export declare function createLinearGradient(first: string | LinearGradientColorStop[], options?: GradientOptions | CustomLinearGradientOptions): string;
 export declare function createMultiStepLinearGradient(baseColor: string, steps?: number, options?: Omit<GradientOptions, 'direction'> & {
     direction?: string;
 }): string;
