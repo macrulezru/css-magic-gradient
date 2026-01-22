@@ -1,4 +1,4 @@
-import { getColorType, extractCssVariableName, isCssVariable, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from './color-utils';
+import { getColorType, extractCssVariableName, isCssVariable, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from 'color-value-tools';
 
 export interface LinearGradientColorStop {
   color: string;

@@ -1,4 +1,4 @@
-import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, rotateHue, hslToHex, hexToRgba } from './color-utils';
+import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, rotateHue, hslToHex, hexToRgba } from 'color-value-tools';
 
 export interface ConicGradientOptions {
   fromAngle?: number;

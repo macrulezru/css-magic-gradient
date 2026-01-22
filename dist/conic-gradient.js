@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createConicGradient = createConicGradient;
 exports.createRainbowConicGradient = createRainbowConicGradient;
-const color_utils_1 = require("./color-utils");
+const color_value_tools_1 = require("color-value-tools");
 function createConicGradient(baseColor, options) {
     const { fromAngle = 0, position = '50% 50%', fallbackColor = '#f5e477', colors: customColors, hueRotation = false, steps = 8, offsetPercent = 20, } = options || {};
     if (customColors && customColors.length > 0) {
@@ -13,9 +13,9 @@ function createConicGradient(baseColor, options) {
                     colorStr = 'transparent';
                 }
                 else {
-                    const type = (0, color_utils_1.getColorType)(item.color);
+                    const type = (0, color_value_tools_1.getColorType)(item.color);
                     if (type === 'hex') {
-                        colorStr = (0, color_utils_1.hexToRgba)(item.color, item.opacity);
+                        colorStr = (0, color_value_tools_1.hexToRgba)(item.color, item.opacity);
                     }
                     else if (type === 'rgb') {
                         colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
@@ -30,25 +30,25 @@ function createConicGradient(baseColor, options) {
         const colorsStr = customColors.map(colorStopToString).join(', ');
         return `conic-gradient(from ${fromAngle}deg at ${position}, ${colorsStr})`;
     }
-    const resolvedBaseColor = (0, color_utils_1.isHexColor)(baseColor) ? (0, color_utils_1.normalizeHex)(baseColor) : fallbackColor;
+    const resolvedBaseColor = (0, color_value_tools_1.isHexColor)(baseColor) ? (0, color_value_tools_1.normalizeHex)(baseColor) : fallbackColor;
     const colors = [];
     if (hueRotation) {
         for (let i = 0; i < steps; i++) {
             const degrees = (i * 360) / steps;
-            const color = (0, color_utils_1.rotateHue)(resolvedBaseColor, degrees);
+            const color = (0, color_value_tools_1.rotateHue)(resolvedBaseColor, degrees);
             const positionPercent = (i * 100) / steps;
             colors.push(`${color} ${positionPercent}%`);
         }
-        colors.push(`${(0, color_utils_1.rotateHue)(resolvedBaseColor, 0)} 100%`);
+        colors.push(`${(0, color_value_tools_1.rotateHue)(resolvedBaseColor, 0)} 100%`);
     }
     else {
         for (let i = 0; i < steps; i++) {
             const percent = offsetPercent * (1 - i / (steps - 1));
-            const color = (0, color_utils_1.adjustHexBrightness)(resolvedBaseColor, percent);
+            const color = (0, color_value_tools_1.adjustHexBrightness)(resolvedBaseColor, percent);
             const positionPercent = (i * 100) / steps;
             colors.push(`${color} ${positionPercent}%`);
         }
-        colors.push(`${(0, color_utils_1.adjustHexBrightness)(resolvedBaseColor, 0)} 100%`);
+        colors.push(`${(0, color_value_tools_1.adjustHexBrightness)(resolvedBaseColor, 0)} 100%`);
     }
     return `conic-gradient(from ${fromAngle}deg at ${position}, ${colors.join(', ')})`;
 }
@@ -58,7 +58,7 @@ function createRainbowConicGradient(options) {
     const stepSize = 360 / steps;
     for (let i = 0; i <= steps; i++) {
         const hue = (i * stepSize) % 360;
-        const color = (0, color_utils_1.hslToHex)(hue, saturation, lightness);
+        const color = (0, color_value_tools_1.hslToHex)(hue, saturation, lightness);
         const positionPercent = (i * 100) / steps;
         colors.push(`${color} ${positionPercent}%`);
     }
