@@ -1,38 +1,39 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCustomLinearGradient = createCustomLinearGradient;
 exports.createLinearGradient = createLinearGradient;
 exports.createMultiStepLinearGradient = createMultiStepLinearGradient;
-function createCustomLinearGradient(stops, options) {
-    const { direction = 'to bottom', angle } = options || {};
-    const gradientDirection = angle ? `${angle}deg` : direction;
-    function colorStopToString(item) {
-        let colorStr = item.color;
-        if (typeof item.opacity === 'number') {
-            if (item.opacity === 0) {
-                colorStr = 'transparent';
-            }
-            else {
-                const type = (0, color_utils_1.getColorType)(item.color);
-                if (type === 'hex') {
-                    // @ts-ignore
-                    colorStr = (0, color_utils_1.hexToRgba)(item.color, item.opacity);
-                }
-                else if (type === 'rgb') {
-                    colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+const color_utils_1 = require("./color-utils");
+function createLinearGradient(first, options) {
+    // array form: custom stops
+    if (Array.isArray(first)) {
+        const stops = first;
+        const { direction = 'to bottom', angle } = options || {};
+        const gradientDirection = angle ? `${angle}deg` : direction;
+        function colorStopToString(item) {
+            let colorStr = item.color;
+            if (typeof item.opacity === 'number') {
+                if (item.opacity === 0) {
+                    colorStr = 'transparent';
                 }
                 else {
-                    colorStr = item.color;
+                    const type = (0, color_utils_1.getColorType)(item.color);
+                    if (type === 'hex') {
+                        colorStr = (0, color_utils_1.hexToRgba)(item.color, item.opacity);
+                    }
+                    else if (type === 'rgb') {
+                        colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+                    }
+                    else {
+                        colorStr = item.color;
+                    }
                 }
             }
+            return item.position ? `${colorStr} ${item.position}` : colorStr;
         }
-        return item.position ? `${colorStr} ${item.position}` : colorStr;
+        const stopsStr = stops.map(colorStopToString).join(', ');
+        return `linear-gradient(${gradientDirection}, ${stopsStr})`;
     }
-    const stopsStr = stops.map(colorStopToString).join(', ');
-    return `linear-gradient(${gradientDirection}, ${stopsStr})`;
-}
-const color_utils_1 = require("./color-utils");
-function createLinearGradient(baseColor, options) {
+    const baseColor = first;
     const { offsetPercent = 15, direction = 'to bottom', angle, fallbackColor = '#f5e477', } = options || {};
     const colorType = (0, color_utils_1.getColorType)(baseColor);
     let colorValue;

@@ -1,3 +1,5 @@
+import { getColorType, extractCssVariableName, isCssVariable, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from './color-utils';
+
 export interface LinearGradientColorStop {
   color: string;
   position?: string;
@@ -9,36 +11,6 @@ export interface CustomLinearGradientOptions {
   angle?: number;
 }
 
-export function createCustomLinearGradient(
-  stops: LinearGradientColorStop[],
-  options?: CustomLinearGradientOptions
-): string {
-  const { direction = 'to bottom', angle } = options || {};
-  const gradientDirection = angle ? `${angle}deg` : direction;
-  function colorStopToString(item: LinearGradientColorStop): string {
-    let colorStr = item.color;
-    if (typeof item.opacity === 'number') {
-      if (item.opacity === 0) {
-        colorStr = 'transparent';
-      } else {
-        const type = getColorType(item.color);
-        if (type === 'hex') {
-          // @ts-ignore
-          colorStr = hexToRgba(item.color, item.opacity);
-        } else if (type === 'rgb') {
-          colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
-        } else {
-          colorStr = item.color;
-        }
-      }
-    }
-    return item.position ? `${colorStr} ${item.position}` : colorStr;
-  }
-  const stopsStr = stops.map(colorStopToString).join(', ');
-  return `linear-gradient(${gradientDirection}, ${stopsStr})`;
-}
-import { getColorType, extractCssVariableName, isCssVariable, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from './color-utils';
-
 export interface GradientOptions {
   offsetPercent?: number;
   direction?: 'to bottom' | 'to top' | 'to right' | 'to left' | string;
@@ -46,13 +18,45 @@ export interface GradientOptions {
   fallbackColor?: string;
 }
 
-export function createLinearGradient(baseColor: string, options?: GradientOptions): string {
+export function createLinearGradient(
+  first: string | LinearGradientColorStop[],
+  options?: GradientOptions | CustomLinearGradientOptions
+): string {
+  // If first arg is an array, behave like old createCustomLinearGradient
+  if (Array.isArray(first)) {
+    const stops = first;
+    const { direction = 'to bottom', angle } = (options as CustomLinearGradientOptions) || {};
+    const gradientDirection = angle ? `${angle}deg` : direction;
+    function colorStopToString(item: LinearGradientColorStop): string {
+      let colorStr = item.color;
+      if (typeof item.opacity === 'number') {
+        if (item.opacity === 0) {
+          colorStr = 'transparent';
+        } else {
+          const type = getColorType(item.color);
+          if (type === 'hex') {
+            colorStr = hexToRgba(item.color, item.opacity);
+          } else if (type === 'rgb') {
+            colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
+          } else {
+            colorStr = item.color;
+          }
+        }
+      }
+      return item.position ? `${colorStr} ${item.position}` : colorStr;
+    }
+    const stopsStr = stops.map(colorStopToString).join(', ');
+    return `linear-gradient(${gradientDirection}, ${stopsStr})`;
+  }
+
+  // Otherwise behave like the original createLinearGradient(baseColor, options)
+  const baseColor = first as string;
   const {
     offsetPercent = 15,
     direction = 'to bottom',
     angle,
     fallbackColor = '#f5e477',
-  } = options || {};
+  } = (options as GradientOptions) || {};
 
   const colorType = getColorType(baseColor);
   let colorValue: string;
