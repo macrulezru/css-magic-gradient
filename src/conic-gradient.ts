@@ -1,19 +1,35 @@
-import { getColorType, isHexColor, normalizeHex, adjustHexBrightness, rotateHue, hslToHex, hexToRgba } from 'color-value-tools';
+import { adjustHexBrightness, rotateHue, hslToHex } from 'color-value-tools';
+import { ColorStop, colorStopToString, resolveBaseColor } from './utils.js';
+
+export type { ColorStop as ConicGradientColorStop };
 
 export interface ConicGradientOptions {
+  /** Starting angle in degrees. Default: 0 */
   fromAngle?: number;
+  /** Gradient center position. Default: '50% 50%' */
   position?: string;
   fallbackColor?: string;
-  colors?: Array<{
-    color: string;
-    opacity?: number;
-    position?: string | number;
-  }>;
+  /** Explicit color stops — when provided, skips auto-generation. */
+  colors?: ColorStop[];
+  /** Rotate hue evenly across all steps instead of adjusting brightness. */
   hueRotation?: boolean;
+  /** Number of auto-generated stops. Default: 8 */
   steps?: number;
+  /** Brightness offset (%) for auto-generated brightness stops. Default: 20 */
   offsetPercent?: number;
+  /** Use repeating-conic-gradient instead of conic-gradient. */
+  repeating?: boolean;
 }
 
+/**
+ * Creates a CSS conic gradient.
+ *
+ * When `options.colors` is provided, those stops are used directly.
+ * When `options.hueRotation` is true, auto-generates stops by rotating hue.
+ * Otherwise, auto-generates stops by adjusting brightness.
+ *
+ * Supports hex, rgb(), hsl(), named colors, and CSS variables as baseColor.
+ */
 export function createConicGradient(
   baseColor: string,
   options?: ConicGradientOptions,
@@ -26,59 +42,52 @@ export function createConicGradient(
     hueRotation = false,
     steps = 8,
     offsetPercent = 20,
+    repeating = false,
   } = options || {};
 
+  const fn = repeating ? 'repeating-conic-gradient' : 'conic-gradient';
+  const header = `from ${fromAngle}deg at ${position}`;
+
+  // Explicit stops mode
   if (customColors && customColors.length > 0) {
-    function colorStopToString(item: { color: string; opacity?: number; position?: string | number }): string {
-      let colorStr = item.color;
-      if (typeof item.opacity === 'number') {
-        if (item.opacity === 0) {
-          colorStr = 'transparent';
-        } else {
-          const type = getColorType(item.color);
-          if (type === 'hex') {
-            colorStr = hexToRgba(item.color, item.opacity);
-          } else if (type === 'rgb') {
-            colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
-          } else {
-            colorStr = item.color;
-          }
-        }
-      }
-      return item.position !== undefined ? `${colorStr} ${item.position}` : colorStr;
-    }
-    const colorsStr = customColors.map(colorStopToString).join(', ');
-    return `conic-gradient(from ${fromAngle}deg at ${position}, ${colorsStr})`;
+    const stops = customColors.map(colorStopToString).join(', ');
+    return `${fn}(${header}, ${stops})`;
   }
 
-  const resolvedBaseColor = isHexColor(baseColor) ? normalizeHex(baseColor) : fallbackColor;
-  const colors: string[] = [];
+  const resolved = resolveBaseColor(baseColor, fallbackColor);
+  const colorStops: string[] = [];
+
   if (hueRotation) {
     for (let i = 0; i < steps; i++) {
       const degrees = (i * 360) / steps;
-      const color = rotateHue(resolvedBaseColor, degrees);
       const positionPercent = (i * 100) / steps;
-      colors.push(`${color} ${positionPercent}%`);
+      colorStops.push(`${rotateHue(resolved.hex, degrees)} ${positionPercent}%`);
     }
-    colors.push(`${rotateHue(resolvedBaseColor, 0)} 100%`);
+    // Close the circle smoothly
+    colorStops.push(`${rotateHue(resolved.hex, 0)} 100%`);
   } else {
     for (let i = 0; i < steps; i++) {
       const percent = offsetPercent * (1 - i / (steps - 1));
-      const color = adjustHexBrightness(resolvedBaseColor, percent);
       const positionPercent = (i * 100) / steps;
-      colors.push(`${color} ${positionPercent}%`);
+      colorStops.push(`${adjustHexBrightness(resolved.hex, percent)} ${positionPercent}%`);
     }
-    colors.push(`${adjustHexBrightness(resolvedBaseColor, 0)} 100%`);
+    colorStops.push(`${adjustHexBrightness(resolved.hex, 0)} 100%`);
   }
-  return `conic-gradient(from ${fromAngle}deg at ${position}, ${colors.join(', ')})`;
+
+  return `${fn}(${header}, ${colorStops.join(', ')})`;
 }
 
+/**
+ * Creates a full-spectrum rainbow conic gradient using HSL color space.
+ * The gradient smoothly cycles through all hues starting at `fromAngle`.
+ */
 export function createRainbowConicGradient(options?: {
   fromAngle?: number;
   position?: string;
   saturation?: number;
   lightness?: number;
   steps?: number;
+  repeating?: boolean;
 }): string {
   const {
     fromAngle = 0,
@@ -86,14 +95,17 @@ export function createRainbowConicGradient(options?: {
     saturation = 80,
     lightness = 60,
     steps = 12,
+    repeating = false,
   } = options || {};
-  const colors: string[] = [];
+
+  const fn = repeating ? 'repeating-conic-gradient' : 'conic-gradient';
   const stepSize = 360 / steps;
+  const colorStops: string[] = [];
+
   for (let i = 0; i <= steps; i++) {
     const hue = (i * stepSize) % 360;
-    const color = hslToHex(hue, saturation, lightness);
-    const positionPercent = (i * 100) / steps;
-    colors.push(`${color} ${positionPercent}%`);
+    colorStops.push(`${hslToHex(hue, saturation, lightness)} ${(i * 100) / steps}%`);
   }
-  return `conic-gradient(from ${fromAngle}deg at ${position}, ${colors.join(', ')})`;
+
+  return `${fn}(from ${fromAngle}deg at ${position}, ${colorStops.join(', ')})`;
 }

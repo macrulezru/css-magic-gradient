@@ -1,22 +1,31 @@
 {
   "name": "css-magic-gradient",
-  "version": "1.0.4",
-  "description": "Generate CSS gradients (linear, radial, conic) with zero dependencies. Vue plugin included.",
+  "version": "1.1.0",
+  "description": "Generate CSS gradients (linear, radial, conic) with TypeScript. Includes presets, WCAG accessibility utilities, Vue 3 and React reactive hooks.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/macrulezru/css-magic-gradient.git"
   },
-  "homepage": "https://macrulez.ru/#/en",
+  "homepage": "https://macrulez.ru/",
   "bugs": {
     "url": "https://github.com/macrulezru/css-magic-gradient/issues"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "module": "dist/index.js",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.js"
+    },
+    "./vue": {
+      "import": "./dist/vue-gradient-plugin.js",
+      "require": "./dist/vue-gradient-plugin.js",
+      "types": "./dist/vue-gradient-plugin.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react-gradient-plugin.js",
+      "require": "./dist/react-gradient-plugin.js",
+      "types": "./dist/react-gradient-plugin.d.ts"
     }
   },
   "files": [
@@ -31,18 +40,36 @@
     "linear-gradient",
     "radial-gradient",
     "conic-gradient",
-    "typescript"
+    "typescript",
+    "vue",
+    "react",
+    "accessibility",
+    "wcag",
+    "color"
   ],
-  "author": "",
+  "author": "Danil Lisin Vladimirovich aka Macrulez",
   "license": "MIT",
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "vue": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@types/react": "^19.2.14",
     "@types/vue": "^1.0.31",
     "@vue/reactivity": "^3.5.27",
     "@vue/runtime-core": "^3.5.27",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vue": "^3.5.27"
   },
   "dependencies": {
-    "vue": "^3.5.27",
-    "color-value-tools": "^1.0.0"
+    "color-value-tools": "^1.1.0"
   }
 }

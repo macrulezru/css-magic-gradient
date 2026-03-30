@@ -1,88 +1,102 @@
-import { getColorType, extractCssVariableName, isCssVariable, isHexColor, normalizeHex, adjustHexBrightness, hexToRgba } from 'color-value-tools';
+import { adjustHexBrightness, mixColors } from 'color-value-tools';
+import { ColorStop, colorStopToString, resolveBaseColor } from './utils.js';
 
-export interface LinearGradientColorStop {
-  color: string;
-  position?: string;
-  opacity?: number;
+export type { ColorStop as LinearGradientColorStop };
+
+/** Direction keyword or angle (deg) for a linear gradient. */
+export type GradientDirection = 'to bottom' | 'to top' | 'to right' | 'to left' | string;
+
+/** CSS Color Level 4 interpolation color space. */
+export type ColorInterpolation = 'srgb' | 'oklch' | 'lab' | 'hsl' | 'oklab' | 'lch';
+
+export interface GradientOptions {
+  /** Brightness offset (%) applied to create the lighter start color. Default: 15 */
+  offsetPercent?: number;
+  direction?: GradientDirection;
+  /** Angle in degrees. Takes precedence over `direction` when provided. */
+  angle?: number;
+  /** Fallback color for unsupported or CSS-variable inputs. Default: '#f5e477' */
+  fallbackColor?: string;
+  /** CSS Color Level 4 interpolation method, e.g. 'oklch'. */
+  interpolation?: ColorInterpolation;
+  /** Use repeating-linear-gradient instead of linear-gradient. */
+  repeating?: boolean;
 }
 
 export interface CustomLinearGradientOptions {
-  direction?: string;
+  direction?: GradientDirection;
   angle?: number;
+  interpolation?: ColorInterpolation;
+  repeating?: boolean;
 }
 
-export interface GradientOptions {
-  offsetPercent?: number;
-  direction?: 'to bottom' | 'to top' | 'to right' | 'to left' | string;
-  angle?: number;
-  fallbackColor?: string;
-}
-
-export function createLinearGradient(
-  first: string | LinearGradientColorStop[],
-  options?: GradientOptions | CustomLinearGradientOptions
+function buildLinearGradient(
+  direction: string,
+  stops: string,
+  interpolation?: ColorInterpolation,
+  repeating = false,
 ): string {
-  // If first arg is an array, behave like old createCustomLinearGradient
+  const fn = repeating ? 'repeating-linear-gradient' : 'linear-gradient';
+  const interp = interpolation ? ` in ${interpolation}` : '';
+  return `${fn}(${direction}${interp}, ${stops})`;
+}
+
+/**
+ * Creates a CSS linear gradient.
+ *
+ * Overload 1 — from a base color (auto-generates light → dark stops):
+ * ```ts
+ * createLinearGradient('#3498db', { direction: 'to right', offsetPercent: 20 })
+ * ```
+ *
+ * Overload 2 — from explicit color stops:
+ * ```ts
+ * createLinearGradient([
+ *   { color: '#ff0000', position: '0%' },
+ *   { color: '#0000ff', position: '100%' },
+ * ], { angle: 45 })
+ * ```
+ *
+ * Supports hex, rgb(), hsl(), named colors, and CSS variables as base color.
+ */
+export function createLinearGradient(
+  first: string | ColorStop[],
+  options?: GradientOptions | CustomLinearGradientOptions,
+): string {
   if (Array.isArray(first)) {
-    const stops = first;
-    const { direction = 'to bottom', angle } = (options as CustomLinearGradientOptions) || {};
-    const gradientDirection = angle ? `${angle}deg` : direction;
-    function colorStopToString(item: LinearGradientColorStop): string {
-      let colorStr = item.color;
-      if (typeof item.opacity === 'number') {
-        if (item.opacity === 0) {
-          colorStr = 'transparent';
-        } else {
-          const type = getColorType(item.color);
-          if (type === 'hex') {
-            colorStr = hexToRgba(item.color, item.opacity);
-          } else if (type === 'rgb') {
-            colorStr = item.color.replace(/rgb\(([^)]+)\)/, (_, rgb) => `rgba(${rgb}, ${item.opacity})`);
-          } else {
-            colorStr = item.color;
-          }
-        }
-      }
-      return item.position ? `${colorStr} ${item.position}` : colorStr;
-    }
-    const stopsStr = stops.map(colorStopToString).join(', ');
-    return `linear-gradient(${gradientDirection}, ${stopsStr})`;
+    const { direction = 'to bottom', angle, interpolation, repeating } =
+      (options as CustomLinearGradientOptions) || {};
+    const dir = angle ? `${angle}deg` : direction;
+    const stops = first.map(colorStopToString).join(', ');
+    return buildLinearGradient(dir, stops, interpolation, repeating);
   }
 
-  // Otherwise behave like the original createLinearGradient(baseColor, options)
-  const baseColor = first as string;
   const {
     offsetPercent = 15,
     direction = 'to bottom',
     angle,
     fallbackColor = '#f5e477',
+    interpolation,
+    repeating,
   } = (options as GradientOptions) || {};
 
-  const colorType = getColorType(baseColor);
-  let colorValue: string;
-  let adjustedColor: string;
+  const resolved = resolveBaseColor(first, fallbackColor);
+  const endColor = resolved.isCssVar ? resolved.varExpression! : resolved.hex;
+  const startColor = adjustHexBrightness(resolved.hex, offsetPercent);
+  const dir = angle ? `${angle}deg` : direction;
 
-  if (colorType === 'css-var') {
-    const varName = extractCssVariableName(baseColor);
-    colorValue = `var(${varName}, ${fallbackColor})`;
-    adjustedColor = adjustHexBrightness(fallbackColor, offsetPercent);
-  } else if (colorType === 'hex') {
-    colorValue = normalizeHex(baseColor);
-    adjustedColor = adjustHexBrightness(colorValue, offsetPercent);
-  } else {
-    colorValue = fallbackColor;
-    adjustedColor = adjustHexBrightness(fallbackColor, offsetPercent);
-  }
-
-  const startColor = adjustedColor;
-  const endColor = colorValue;
-  const gradientDirection = angle ? `${angle}deg` : direction;
-  return `linear-gradient(${gradientDirection}, ${startColor}, ${endColor})`;
+  return buildLinearGradient(dir, `${startColor}, ${endColor}`, interpolation, repeating);
 }
 
+/**
+ * Creates a multi-stop linear gradient by interpolating brightness from light
+ * to base color across `steps` evenly spaced stops.
+ *
+ * Supports hex, rgb(), hsl(), and named colors as base color.
+ */
 export function createMultiStepLinearGradient(
   baseColor: string,
-  steps: number = 3,
+  steps = 3,
   options?: Omit<GradientOptions, 'direction'> & { direction?: string },
 ): string {
   const {
@@ -90,24 +104,51 @@ export function createMultiStepLinearGradient(
     direction = 'to bottom',
     angle,
     fallbackColor = '#f5e477',
+    interpolation,
+    repeating,
   } = options || {};
 
-  const colorType = getColorType(baseColor);
-  let colorValue: string;
-  if (colorType === 'css-var') {
-    colorValue = fallbackColor;
-  } else if (colorType === 'hex') {
-    colorValue = normalizeHex(baseColor);
-  } else {
-    colorValue = fallbackColor;
+  const resolved = resolveBaseColor(baseColor, fallbackColor);
+  const colors: string[] = [];
+
+  for (let i = 0; i < steps; i++) {
+    const percent = offsetPercent * (1 - i / (steps - 1));
+    colors.push(adjustHexBrightness(resolved.hex, percent));
   }
+
+  const dir = angle ? `${angle}deg` : direction;
+  return buildLinearGradient(dir, colors.join(', '), interpolation, repeating);
+}
+
+/**
+ * Creates a linear gradient by evenly mixing two colors across `steps` stops
+ * using HSL interpolation. Useful for smooth, perceptually pleasing transitions.
+ *
+ * Supports any color format accepted by color-value-tools.
+ */
+export function createMixedLinearGradient(
+  colorA: string,
+  colorB: string,
+  steps = 5,
+  options?: Omit<GradientOptions, 'offsetPercent'>,
+): string {
+  const {
+    direction = 'to bottom',
+    angle,
+    fallbackColor = '#f5e477',
+    interpolation,
+    repeating,
+  } = options || {};
+
+  const resolvedA = resolveBaseColor(colorA, fallbackColor);
+  const resolvedB = resolveBaseColor(colorB, fallbackColor);
 
   const colors: string[] = [];
   for (let i = 0; i < steps; i++) {
-    const percent = offsetPercent * (1 - i / (steps - 1));
-    const color = adjustHexBrightness(colorValue, percent);
-    colors.push(color);
+    const t = steps === 1 ? 0 : i / (steps - 1);
+    colors.push(mixColors(resolvedA.hex, resolvedB.hex, t, { mode: 'hsl', format: 'hex' }));
   }
-  const gradientDirection = angle ? `${angle}deg` : direction;
-  return `linear-gradient(${gradientDirection}, ${colors.join(', ')})`;
+
+  const dir = angle ? `${angle}deg` : direction;
+  return buildLinearGradient(dir, colors.join(', '), interpolation, repeating);
 }
