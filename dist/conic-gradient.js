@@ -7,23 +7,63 @@ const utils_js_1 = require("./utils.js");
 /**
  * Creates a CSS conic gradient.
  *
- * When `options.colors` is provided, those stops are used directly.
- * When `options.hueRotation` is true, auto-generates stops by rotating hue.
- * Otherwise, auto-generates stops by adjusting brightness.
+ * Modes (evaluated in priority order):
+ * 1. `colorScale` — interpolates through an array of colors around the circle.
+ * 2. `harmonyType` — auto-generates colors from a color harmony.
+ * 3. `colors` — uses explicit ColorStop array directly.
+ * 4. `hueRotation` — rotates hue evenly across all steps.
+ * 5. Auto-generate stops by adjusting brightness.
  *
  * Supports hex, rgb(), hsl(), named colors, and CSS variables as baseColor.
  */
 function createConicGradient(baseColor, options) {
-    const { fromAngle = 0, position = '50% 50%', fallbackColor = '#f5e477', colors: customColors, hueRotation = false, steps = 8, offsetPercent = 20, repeating = false, } = options || {};
+    const { fromAngle = 0, position = '50% 50%', fallbackColor = '#f5e477', colors: customColors, colorScale, hueRotation = false, harmonyType, interpolationSpace = 'oklch', steps = 8, offsetPercent = 20, repeating = false, } = options || {};
     const fn = repeating ? 'repeating-conic-gradient' : 'conic-gradient';
     const header = `from ${fromAngle}deg at ${position}`;
-    // Explicit stops mode
+    const scaleMode = (0, utils_js_1.toScaleMode)(interpolationSpace);
+    // ── colorScale mode: interpolate through an arbitrary list of colors ────────
+    if (colorScale && colorScale.length >= 2) {
+        // Close the loop by appending the first color at the end
+        const anchors = [...colorScale, colorScale[0]];
+        const scale = (0, color_value_tools_1.createColorScale)(anchors, steps + 1, { space: scaleMode, format: 'hex' });
+        const stops = scale
+            .map((c, i) => `${c} ${((i / (scale.length - 1)) * 100).toFixed(1)}%`)
+            .join(', ');
+        return `${fn}(${header}, ${stops})`;
+    }
+    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, fallbackColor);
+    // ── harmonyType mode: use color harmony around the circle ───────────────────
+    if (harmonyType) {
+        let harmonyColors;
+        switch (harmonyType) {
+            case 'complementary':
+                harmonyColors = [resolved.hex, (0, color_value_tools_1.complement)(resolved.hex)];
+                break;
+            case 'triadic':
+                harmonyColors = (0, color_value_tools_1.triadic)(resolved.hex);
+                break;
+            case 'tetradic':
+                harmonyColors = (0, color_value_tools_1.tetradic)(resolved.hex);
+                break;
+            case 'analogous':
+                harmonyColors = (0, color_value_tools_1.analogous)(resolved.hex);
+                break;
+        }
+        // Close the circle by looping back to the start
+        const anchors = [...harmonyColors, harmonyColors[0]];
+        const scale = (0, color_value_tools_1.createColorScale)(anchors, steps + 1, { space: scaleMode, format: 'hex' });
+        const stops = scale
+            .map((c, i) => `${c} ${((i / (scale.length - 1)) * 100).toFixed(1)}%`)
+            .join(', ');
+        return `${fn}(${header}, ${stops})`;
+    }
+    // ── Explicit stops mode ─────────────────────────────────────────────────────
     if (customColors && customColors.length > 0) {
         const stops = customColors.map(utils_js_1.colorStopToString).join(', ');
         return `${fn}(${header}, ${stops})`;
     }
-    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, fallbackColor);
     const colorStops = [];
+    // ── hueRotation mode ────────────────────────────────────────────────────────
     if (hueRotation) {
         for (let i = 0; i < steps; i++) {
             const degrees = (i * 360) / steps;
@@ -34,6 +74,7 @@ function createConicGradient(baseColor, options) {
         colorStops.push(`${(0, color_value_tools_1.rotateHue)(resolved.hex, 0)} 100%`);
     }
     else {
+        // ── Brightness mode (default) ──────────────────────────────────────────
         for (let i = 0; i < steps; i++) {
             const percent = offsetPercent * (1 - i / (steps - 1));
             const positionPercent = (i * 100) / steps;

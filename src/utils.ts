@@ -6,6 +6,7 @@ import {
   hexToRgba,
   setAlpha,
 } from 'color-value-tools';
+import type { ScaleInterpolation } from './linear-gradient.js';
 
 export interface ColorStop {
   color: string;
@@ -76,4 +77,18 @@ export function resolveBaseColor(color: string, fallback: string): ResolvedColor
   }
 
   return { hex: normalizeHex(fallback), isCssVar: false };
+}
+
+/**
+ * Maps a `ScaleInterpolation` value to the `space` string accepted by
+ * `createColorScale` from color-value-tools. Identity for all supported values.
+ *
+ * `ScaleInterpolation` is already restricted to the supported subset
+ * ('rgb' | 'hsl' | 'oklab' | 'oklch'), so no remapping is needed here.
+ * The type contract enforces correctness at the call site.
+ */
+export function toScaleMode(
+  space: import('./linear-gradient.js').ScaleInterpolation,
+): 'rgb' | 'hsl' | 'oklab' | 'oklch' {
+  return space;
 }

@@ -4,5 +4,7 @@ export * from './conic-gradient.js';
 export type { ColorStop, ResolvedColor } from './utils.js';
 export * from './presets.js';
 export * from './accessibility.js';
-export { useLinearGradient, useMultiStepLinearGradient, useMixedLinearGradient, useRadialGradient, useConicGradient, useRainbowConicGradient, } from './vue-gradient-plugin.js';
+export * from './css-variables.js';
+export * from './canvas-export.js';
+export { useLinearGradient, useMultiStepLinearGradient, useMixedLinearGradient, useRadialGradient, useConicGradient, useRainbowConicGradient, useComplementaryGradient, useTriadicGradient, useAnalogousGradient, useTetradicGradient, useSplitComplementaryGradient, useTintGradient, useShadeGradient, useToneGradient, useAccessibleGradient, } from './vue-gradient-plugin.js';
 export { default as VueGradientPlugin } from './vue-gradient-plugin.js';
