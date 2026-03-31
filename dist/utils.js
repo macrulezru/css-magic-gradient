@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.colorStopToString = colorStopToString;
 exports.resolveBaseColor = resolveBaseColor;
+exports.toScaleMode = toScaleMode;
 const color_value_tools_1 = require("color-value-tools");
 /**
  * Converts a color stop object to its CSS string representation.
@@ -52,4 +53,15 @@ function resolveBaseColor(color, fallback) {
         return { hex: parsed.hex, isCssVar: false };
     }
     return { hex: (0, color_value_tools_1.normalizeHex)(fallback), isCssVar: false };
+}
+/**
+ * Maps a `ScaleInterpolation` value to the `space` string accepted by
+ * `createColorScale` from color-value-tools. Identity for all supported values.
+ *
+ * `ScaleInterpolation` is already restricted to the supported subset
+ * ('rgb' | 'hsl' | 'oklab' | 'oklch'), so no remapping is needed here.
+ * The type contract enforces correctness at the call site.
+ */
+function toScaleMode(space) {
+    return space;
 }

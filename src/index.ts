@@ -12,6 +12,12 @@ export * from './presets.js';
 // Accessibility utilities
 export * from './accessibility.js';
 
+// CSS variable utilities
+export * from './css-variables.js';
+
+// Canvas / image export utilities
+export * from './canvas-export.js';
+
 // Vue 3 reactive hooks & plugin (also available via css-magic-gradient/vue)
 export {
   useLinearGradient,
@@ -20,6 +26,15 @@ export {
   useRadialGradient,
   useConicGradient,
   useRainbowConicGradient,
+  useComplementaryGradient,
+  useTriadicGradient,
+  useAnalogousGradient,
+  useTetradicGradient,
+  useSplitComplementaryGradient,
+  useTintGradient,
+  useShadeGradient,
+  useToneGradient,
+  useAccessibleGradient,
 } from './vue-gradient-plugin.js';
 export { default as VueGradientPlugin } from './vue-gradient-plugin.js';
 

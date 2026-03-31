@@ -4,6 +4,12 @@ export type { ColorStop as LinearGradientColorStop };
 export type GradientDirection = 'to bottom' | 'to top' | 'to right' | 'to left' | string;
 /** CSS Color Level 4 interpolation color space. */
 export type ColorInterpolation = 'srgb' | 'oklch' | 'lab' | 'hsl' | 'oklab' | 'lch';
+/**
+ * Subset of color spaces supported by `createColorScale` from color-value-tools.
+ * `lab` and `lch` are intentionally excluded — `createColorScale` does not accept
+ * them. Use `oklab` and `oklch` instead (perceptually superior alternatives).
+ */
+export type ScaleInterpolation = 'rgb' | 'hsl' | 'oklab' | 'oklch';
 export interface GradientOptions {
     /** Brightness offset (%) applied to create the lighter start color. Default: 15 */
     offsetPercent?: number;
