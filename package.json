@@ -1,12 +1,14 @@
 {
   "name": "css-magic-gradient",
-  "version": "1.2.7",
-  "description": "Generate CSS gradients (linear, radial, conic) with TypeScript. Includes presets, WCAG accessibility utilities, Vue 3 and React reactive hooks.",
+  "version": "1.2.8",
+  "description": "Generate CSS linear, radial and conic gradients with presets, color harmony and WCAG contrast utilities. Vanilla JS / Vue 3 / React.",
+  "author": "macrulez <macrulezru@gmail.com> (https://macrulez.ru/en)",
+  "license": "MIT",
+  "homepage": "https://github.com/macrulezru/css-magic-gradient#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/macrulezru/css-magic-gradient.git"
   },
-  "homepage": "https://macrulez.ru/",
   "bugs": {
     "url": "https://github.com/macrulezru/css-magic-gradient/issues"
   },
@@ -14,24 +16,31 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
     "./vue": {
+      "types": "./dist/vue-gradient-plugin.d.ts",
       "import": "./dist/vue-gradient-plugin.js",
-      "require": "./dist/vue-gradient-plugin.js",
-      "types": "./dist/vue-gradient-plugin.d.ts"
+      "require": "./dist/vue-gradient-plugin.js"
     },
     "./react": {
+      "types": "./dist/react-gradient-plugin.d.ts",
       "import": "./dist/react-gradient-plugin.js",
-      "require": "./dist/react-gradient-plugin.js",
-      "types": "./dist/react-gradient-plugin.d.ts"
+      "require": "./dist/react-gradient-plugin.js"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc"
   },
   "keywords": [
@@ -40,15 +49,13 @@
     "linear-gradient",
     "radial-gradient",
     "conic-gradient",
-    "typescript",
-    "vue",
-    "react",
-    "accessibility",
+    "color",
     "wcag",
-    "color"
+    "vue",
+    "vue3",
+    "react",
+    "typescript"
   ],
-  "author": "Danil Lisin Vladimirovich aka Macrulez",
-  "license": "MIT",
   "peerDependencies": {
     "react": ">=17.0.0",
     "vue": ">=3.0.0"
@@ -61,6 +68,9 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "color-value-tools": "^1.1.1"
+  },
   "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/vue": "^1.0.31",
@@ -68,8 +78,5 @@
     "@vue/runtime-core": "^3.5.27",
     "typescript": "^5.0.0",
     "vue": "^3.5.27"
-  },
-  "dependencies": {
-    "color-value-tools": "^1.1.1"
   }
 }
