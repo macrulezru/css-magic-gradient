@@ -1,6 +1,6 @@
 {
   "name": "css-magic-gradient",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Generate CSS linear, radial and conic gradients with presets, color harmony and WCAG contrast utilities. Vanilla JS / Vue 3 / React.",
   "author": "macrulez <macrulezru@gmail.com> (https://macrulez.ru/en)",
   "license": "MIT",
@@ -69,7 +69,7 @@
     }
   },
   "dependencies": {
-    "color-value-tools": "^1.1.1"
+    "color-value-tools": "^1.1.6"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
