@@ -1,6 +1,6 @@
 # **CSS Magic Gradient**
 
-![Color Value Tools](https://github.com/macrulezru/assets/blob/master/packages-images/css-magic-gradient.png?raw=true)
+![CSS Magic Gradient](https://github.com/macrulezru/assets/blob/master/packages-images/css-magic-gradient.png?raw=true)
 
 TypeScript library for generating CSS gradients — linear, radial, and conic. Includes gradient presets, color harmony generators, WCAG accessibility utilities, CSS variable support, canvas export, Vue 3 reactive hooks, and React hooks — with a single runtime dependency.
 
