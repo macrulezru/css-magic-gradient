@@ -6,5 +6,3 @@ export * from './presets.js';
 export * from './accessibility.js';
 export * from './css-variables.js';
 export * from './canvas-export.js';
-export { useLinearGradient, useMultiStepLinearGradient, useMixedLinearGradient, useRadialGradient, useConicGradient, useRainbowConicGradient, useComplementaryGradient, useTriadicGradient, useAnalogousGradient, useTetradicGradient, useSplitComplementaryGradient, useTintGradient, useShadeGradient, useToneGradient, useAccessibleGradient, } from './vue-gradient-plugin.js';
-export { default as VueGradientPlugin } from './vue-gradient-plugin.js';
