@@ -88,6 +88,80 @@ export function Demo() {
 }
 ```
 
+### More examples
+
+#### Vanilla JS
+
+**A gradient that doesn't wreck text readability**
+
+`createAccessibleGradient` adjusts the colors' lightness (or saturation) until white text stays readable across the whole gradient, not just at its ends — checked against real WCAG contrast.
+
+```ts
+import { createAccessibleGradient } from 'css-magic-gradient'
+
+const gradient = createAccessibleGradient('#3498db', '#ffffff', {
+  targetLevel: 'AA',
+})
+
+// Adjusts lightness (or saturation) in small steps until white text stays
+// readable across the whole gradient — not just at its two endpoints,
+// checked against real WCAG contrast ratios.
+```
+
+#### Vue
+
+**Reactive gradients in Vue — contrast check included**
+
+`useTetradicGradient` and `useAccessibleGradient` both return a `ComputedRef` — change the source color and the whole chain, including the accessible variant, recomputes itself.
+
+```ts
+import { ref } from 'vue'
+import { useTetradicGradient, useAccessibleGradient } from 'css-magic-gradient'
+
+const color = ref('#3498db')
+
+const tetradic = useTetradicGradient(color, { type: 'conic', steps: 24 })
+const accessible = useAccessibleGradient(color, ref('#ffffff'), { targetLevel: 'AA' })
+
+// Both are ComputedRef<string> — change color.value and every gradient
+// derived from it, including the accessible one, recomputes on its own.
+```
+
+#### React
+
+**The same hooks in React — with a live color picker**
+
+Hooks from `css-magic-gradient/react` return a plain `string` memoized with `useMemo` — change `color` through `useState`, and all four gradients recompute along with it.
+
+```tsx
+import { useState } from 'react'
+import {
+  useLinearGradient,
+  useTetradicGradient,
+  useTintGradient,
+  useAccessibleGradient,
+} from 'css-magic-gradient/react'
+
+export function GradientShowcase() {
+  const [color, setColor] = useState('#3498db')
+
+  const linear = useLinearGradient(color, { direction: 'to right', offsetPercent: 20 })
+  const tetradic = useTetradicGradient(color, { type: 'conic', steps: 24 })
+  const tint = useTintGradient(color, 7)
+  const accessible = useAccessibleGradient(color, '#ffffff', { targetLevel: 'AA' })
+
+  return (
+    <div>
+      <input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+      <div style={{ background: linear, height: 80, borderRadius: 8 }} />
+      <div style={{ background: tetradic, height: 80, borderRadius: 8 }} />
+      <div style={{ background: tint, height: 80, borderRadius: 8 }} />
+      <div style={{ background: accessible, height: 80, borderRadius: 8 }} />
+    </div>
+  )
+}
+```
+
 ---
 
 ## Documentation & links
