@@ -24,6 +24,17 @@ TypeScript library for generating CSS gradients — linear, radial, and conic. I
 
 ---
 
+## When you'd reach for this
+
+A gradient that looks smooth in a design mockup can show muddy transitions and visible banding in the browser — css-magic-gradient computes the transition through more accurate color spaces instead of a straight line between two colors, so no banding survives to the output.
+
+- **A background needs to match brand colors** — A brand's design system defines one accent color — the rest of the gradient is generated automatically as a harmonious scheme around it, instead of hunting for neighboring shades by eye.
+- **Text over a gradient isn't readable everywhere** — Light text reads fine on the dark end of a gradient and disappears on the light end — contrast can be checked across the whole transition at once, and the color stops shifted automatically so the text stays readable everywhere.
+- **A social preview image is generated without a browser** — An image for a shared link gets built on the server when an article is published, not painted by hand each time — the same gradient used on the site can be rendered straight into a plain image file, no browser and no designer required.
+- **Only gradient generation is needed, no extra framework** — The utility gets used in a plain TypeScript script or an entirely different framework — Vue and React stay out of the build, even if the rest of the project happens to use them for something else.
+
+---
+
 ## Installation
 
 | Environment | Minimum version                                            |
