@@ -148,6 +148,16 @@ export function gradientToDataURL(
   const gradient = gradientToCanvasGradient(params, ctx);
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
+
+  if (typeof (canvas as HTMLCanvasElement).toDataURL !== 'function') {
+    throw new Error(
+      '[css-magic-gradient] gradientToDataURL() requires a browser <canvas> element with ' +
+        'toDataURL() support. In a Web Worker (OffscreenCanvas environment) use ' +
+        'gradientToImageData() instead, or call convertToBlob() on an OffscreenCanvas ' +
+        'obtained separately.',
+    );
+  }
+
   return (canvas as HTMLCanvasElement).toDataURL('image/png');
 }
 
@@ -171,10 +181,10 @@ function createCanvas(width: number, height: number): HTMLCanvasElement | Offscr
 }
 
 function getContext(canvas: HTMLCanvasElement | OffscreenCanvas): CanvasRenderingContext2D {
-  const ctx =
-    canvas instanceof HTMLCanvasElement
-      ? canvas.getContext('2d')
-      : (canvas as OffscreenCanvas).getContext('2d');
+  const isHtmlCanvas = typeof HTMLCanvasElement !== 'undefined' && canvas instanceof HTMLCanvasElement;
+  const ctx = isHtmlCanvas
+    ? (canvas as HTMLCanvasElement).getContext('2d')
+    : (canvas as OffscreenCanvas).getContext('2d');
 
   if (!ctx) {
     throw new Error('[css-magic-gradient] Could not obtain 2D rendering context from canvas.');

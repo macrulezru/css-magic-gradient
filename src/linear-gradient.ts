@@ -73,7 +73,7 @@ export function createLinearGradient(
   if (Array.isArray(first)) {
     const { direction = 'to bottom', angle, interpolation, repeating } =
       (options as CustomLinearGradientOptions) || {};
-    const dir = angle ? `${angle}deg` : direction;
+    const dir = angle !== undefined ? `${angle}deg` : direction;
     const stops = first.map(colorStopToString).join(', ');
     return buildLinearGradient(dir, stops, interpolation, repeating);
   }
@@ -90,7 +90,7 @@ export function createLinearGradient(
   const resolved = resolveBaseColor(first, fallbackColor);
   const endColor = resolved.isCssVar ? resolved.varExpression! : resolved.hex;
   const startColor = adjustHexBrightness(resolved.hex, offsetPercent);
-  const dir = angle ? `${angle}deg` : direction;
+  const dir = angle !== undefined ? `${angle}deg` : direction;
 
   return buildLinearGradient(dir, `${startColor}, ${endColor}`, interpolation, repeating);
 }
@@ -123,7 +123,7 @@ export function createMultiStepLinearGradient(
     colors.push(adjustHexBrightness(resolved.hex, percent));
   }
 
-  const dir = angle ? `${angle}deg` : direction;
+  const dir = angle !== undefined ? `${angle}deg` : direction;
   return buildLinearGradient(dir, colors.join(', '), interpolation, repeating);
 }
 
@@ -156,6 +156,6 @@ export function createMixedLinearGradient(
     colors.push(mixColors(resolvedA.hex, resolvedB.hex, t, { mode: 'hsl', format: 'hex' }));
   }
 
-  const dir = angle ? `${angle}deg` : direction;
+  const dir = angle !== undefined ? `${angle}deg` : direction;
   return buildLinearGradient(dir, colors.join(', '), interpolation, repeating);
 }

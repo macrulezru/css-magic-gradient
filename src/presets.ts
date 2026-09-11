@@ -208,7 +208,8 @@ export function createTriadicGradient(
     smoothness = 3,
     interpolationSpace = 'oklch',
   } = options || {};
-  const [c1, c2, c3] = triadic(baseColor);
+  const resolved = resolveBaseColor(baseColor, '#f5e477');
+  const [c1, c2, c3] = triadic(resolved.hex);
   const totalSteps = Math.max(3, smoothness);
   if (totalSteps === 3) {
     return createLinearGradient([{ color: c1 }, { color: c2 }, { color: c3 }], {
@@ -233,7 +234,8 @@ export function createAnalogousGradient(
   options?: HarmonyGradientOptions & { spread?: number },
 ): string {
   const { direction = 'to right', angle, spread, interpolationSpace = 'oklch' } = options || {};
-  const [c1, c2, c3] = analogous(baseColor, spread);
+  const resolved = resolveBaseColor(baseColor, '#f5e477');
+  const [c1, c2, c3] = analogous(resolved.hex, spread);
   const steps = (options?.steps ?? 3);
   if (steps === 3) {
     return createLinearGradient([{ color: c1 }, { color: c2 }, { color: c3 }], {
@@ -264,7 +266,8 @@ export function createTetradicGradient(
     steps = 9,
     interpolationSpace = 'oklch',
   } = options || {};
-  const [c1, c2, c3, c4] = tetradic(baseColor);
+  const resolved = resolveBaseColor(baseColor, '#f5e477');
+  const [c1, c2, c3, c4] = tetradic(resolved.hex);
   const mode = toScaleMode(interpolationSpace);
 
   if (type === 'conic') {
@@ -277,7 +280,7 @@ export function createTetradicGradient(
 
   if (type === 'radial') {
     const scale = createColorScale([c1, c2, c3, c4], steps, { space: mode, format: 'hex' });
-    return createRadialGradient(baseColor, {
+    return createRadialGradient(resolved.hex, {
       colors: scale.map(c => ({ color: c })),
     });
   }
@@ -298,7 +301,8 @@ export function createSplitComplementaryGradient(
   options?: HarmonyGradientOptions,
 ): string {
   const { direction = 'to right', angle, steps = 5, interpolationSpace = 'oklch' } = options || {};
-  const [c1, c2, c3] = splitComplementary(baseColor);
+  const resolved = resolveBaseColor(baseColor, '#f5e477');
+  const [c1, c2, c3] = splitComplementary(resolved.hex);
   if (steps === 3) {
     return createLinearGradient([{ color: c1 }, { color: c2 }, { color: c3 }], {
       direction,
@@ -323,7 +327,8 @@ export function createMonochromaticGradient(
   options?: { direction?: string; angle?: number },
 ): string {
   const { direction = 'to bottom', angle } = options || {};
-  const colorShadeArr = colorShades(baseColor, steps);
+  const resolved = resolveBaseColor(baseColor, '#f5e477');
+  const colorShadeArr = colorShades(resolved.hex, steps);
   return createLinearGradient(
     colorShadeArr.map(color => ({ color })),
     { direction, angle },

@@ -93,22 +93,19 @@ function sampleGradientContrasts(
  * gradient stop colors.
  *
  * With `detailed: true` returns a `BestTextColorDetail` object instead.
- * With `weightByArea: true` the contrast scores are weighted so that sections
- * covering more of the gradient area count more (uniform sampling is used as
- * a reasonable approximation for solid-stop gradients).
  */
 export function bestGradientTextColor(colorA: string, colorB: string): '#000000' | '#ffffff';
 export function bestGradientTextColor(
   colors: string[],
-  options?: { detailed?: false; weightByArea?: boolean },
+  options?: { detailed?: false },
 ): '#000000' | '#ffffff';
 export function bestGradientTextColor(
   colors: string[],
-  options: { detailed: true; weightByArea?: boolean },
+  options: { detailed: true },
 ): BestTextColorDetail;
 export function bestGradientTextColor(
   firstArg: string | string[],
-  secondArgOrOptions?: string | { detailed?: boolean; weightByArea?: boolean },
+  secondArgOrOptions?: string | { detailed?: boolean },
 ): '#000000' | '#ffffff' | BestTextColorDetail {
   // Normalize arguments — handle legacy (colorA, colorB) signature
   let gradientColors: string[];
@@ -119,7 +116,7 @@ export function bestGradientTextColor(
     gradientColors = [firstArg, secondArgOrOptions];
   } else if (Array.isArray(firstArg)) {
     gradientColors = firstArg;
-    const opts = secondArgOrOptions as { detailed?: boolean; weightByArea?: boolean } | undefined;
+    const opts = secondArgOrOptions as { detailed?: boolean } | undefined;
     detailed = opts?.detailed === true;
   } else {
     gradientColors = [firstArg as string];

@@ -43,18 +43,13 @@ export interface BestTextColorDetail {
  * gradient stop colors.
  *
  * With `detailed: true` returns a `BestTextColorDetail` object instead.
- * With `weightByArea: true` the contrast scores are weighted so that sections
- * covering more of the gradient area count more (uniform sampling is used as
- * a reasonable approximation for solid-stop gradients).
  */
 export declare function bestGradientTextColor(colorA: string, colorB: string): '#000000' | '#ffffff';
 export declare function bestGradientTextColor(colors: string[], options?: {
     detailed?: false;
-    weightByArea?: boolean;
 }): '#000000' | '#ffffff';
 export declare function bestGradientTextColor(colors: string[], options: {
     detailed: true;
-    weightByArea?: boolean;
 }): BestTextColorDetail;
 /**
  * Returns the minimum WCAG contrast ratio between a text color and any point

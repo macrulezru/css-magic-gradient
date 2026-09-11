@@ -76,7 +76,7 @@ function createConicGradient(baseColor, options) {
     else {
         // ── Brightness mode (default) ──────────────────────────────────────────
         for (let i = 0; i < steps; i++) {
-            const percent = offsetPercent * (1 - i / (steps - 1));
+            const percent = steps === 1 ? offsetPercent : offsetPercent * (1 - i / (steps - 1));
             const positionPercent = (i * 100) / steps;
             colorStops.push(`${(0, color_value_tools_1.adjustHexBrightness)(resolved.hex, percent)} ${positionPercent}%`);
         }
