@@ -122,7 +122,8 @@ function createComplementaryGradient(baseColor, options) {
  */
 function createTriadicGradient(baseColor, options) {
     const { direction = 'to right', angle, smoothness = 3, interpolationSpace = 'oklch', } = options || {};
-    const [c1, c2, c3] = (0, color_value_tools_1.triadic)(baseColor);
+    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, '#f5e477');
+    const [c1, c2, c3] = (0, color_value_tools_1.triadic)(resolved.hex);
     const totalSteps = Math.max(3, smoothness);
     if (totalSteps === 3) {
         return (0, linear_gradient_js_1.createLinearGradient)([{ color: c1 }, { color: c2 }, { color: c3 }], {
@@ -141,7 +142,8 @@ function createTriadicGradient(baseColor, options) {
 function createAnalogousGradient(baseColor, options) {
     var _a;
     const { direction = 'to right', angle, spread, interpolationSpace = 'oklch' } = options || {};
-    const [c1, c2, c3] = (0, color_value_tools_1.analogous)(baseColor, spread);
+    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, '#f5e477');
+    const [c1, c2, c3] = (0, color_value_tools_1.analogous)(resolved.hex, spread);
     const steps = ((_a = options === null || options === void 0 ? void 0 : options.steps) !== null && _a !== void 0 ? _a : 3);
     if (steps === 3) {
         return (0, linear_gradient_js_1.createLinearGradient)([{ color: c1 }, { color: c2 }, { color: c3 }], {
@@ -159,7 +161,8 @@ function createAnalogousGradient(baseColor, options) {
  */
 function createTetradicGradient(baseColor, options) {
     const { direction = 'to right', angle, type = 'linear', steps = 9, interpolationSpace = 'oklch', } = options || {};
-    const [c1, c2, c3, c4] = (0, color_value_tools_1.tetradic)(baseColor);
+    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, '#f5e477');
+    const [c1, c2, c3, c4] = (0, color_value_tools_1.tetradic)(resolved.hex);
     const mode = (0, utils_js_1.toScaleMode)(interpolationSpace);
     if (type === 'conic') {
         const scale = (0, color_value_tools_1.createColorScale)([c1, c2, c3, c4, c1], steps, { space: mode, format: 'hex' });
@@ -170,7 +173,7 @@ function createTetradicGradient(baseColor, options) {
     }
     if (type === 'radial') {
         const scale = (0, color_value_tools_1.createColorScale)([c1, c2, c3, c4], steps, { space: mode, format: 'hex' });
-        return (0, radial_gradient_js_1.createRadialGradient)(baseColor, {
+        return (0, radial_gradient_js_1.createRadialGradient)(resolved.hex, {
             colors: scale.map(c => ({ color: c })),
         });
     }
@@ -183,7 +186,8 @@ function createTetradicGradient(baseColor, options) {
  */
 function createSplitComplementaryGradient(baseColor, options) {
     const { direction = 'to right', angle, steps = 5, interpolationSpace = 'oklch' } = options || {};
-    const [c1, c2, c3] = (0, color_value_tools_1.splitComplementary)(baseColor);
+    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, '#f5e477');
+    const [c1, c2, c3] = (0, color_value_tools_1.splitComplementary)(resolved.hex);
     if (steps === 3) {
         return (0, linear_gradient_js_1.createLinearGradient)([{ color: c1 }, { color: c2 }, { color: c3 }], {
             direction,
@@ -200,7 +204,8 @@ function createSplitComplementaryGradient(baseColor, options) {
  */
 function createMonochromaticGradient(baseColor, steps = 5, options) {
     const { direction = 'to bottom', angle } = options || {};
-    const colorShadeArr = (0, color_value_tools_1.colorShades)(baseColor, steps);
+    const resolved = (0, utils_js_1.resolveBaseColor)(baseColor, '#f5e477');
+    const colorShadeArr = (0, color_value_tools_1.colorShades)(resolved.hex, steps);
     return (0, linear_gradient_js_1.createLinearGradient)(colorShadeArr.map(color => ({ color })), { direction, angle });
 }
 /**

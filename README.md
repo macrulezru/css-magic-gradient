@@ -127,7 +127,7 @@ const gradient = createAccessibleGradient('#3498db', '#ffffff', {
 
 ```ts
 import { ref } from 'vue'
-import { useTetradicGradient, useAccessibleGradient } from 'css-magic-gradient'
+import { useTetradicGradient, useAccessibleGradient } from 'css-magic-gradient/vue'
 
 const color = ref('#3498db')
 
