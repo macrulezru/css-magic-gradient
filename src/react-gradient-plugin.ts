@@ -15,6 +15,8 @@ import {
   createAnalogousGradient,
   createTetradicGradient,
   createSplitComplementaryGradient,
+  createMonochromaticGradient,
+  createHueWheelGradient,
   createTintGradient,
   createShadeGradient,
   createToneGradient,
@@ -134,6 +136,24 @@ export function useRainbowConicGradient(
 ): string {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => createRainbowConicGradient(options), [JSON.stringify(options)]);
+}
+
+/**
+ * Returns a memoized hue-rotating conic gradient string from any base color.
+ * SSR-safe.
+ *
+ * @example
+ * const gradient = useHueWheelGradient('#3498db', { steps: 12 });
+ */
+export function useHueWheelGradient(
+  baseColor: string,
+  options?: Parameters<typeof createHueWheelGradient>[1],
+): string {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => createHueWheelGradient(baseColor, options), [
+    baseColor,
+    JSON.stringify(options),
+  ]);
 }
 
 // ─── New harmony hooks ────────────────────────────────────────────────────────
@@ -284,6 +304,27 @@ export function useToneGradient(
 ): string {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => createToneGradient(baseColor, steps, options), [
+    baseColor,
+    steps,
+    JSON.stringify(options),
+  ]);
+}
+
+/**
+ * Returns a memoized monochromatic gradient using `steps` shades of the base
+ * color, from lightest to darkest.
+ * SSR-safe.
+ *
+ * @example
+ * const gradient = useMonochromaticGradient('#3498db', 7);
+ */
+export function useMonochromaticGradient(
+  baseColor: string,
+  steps = 5,
+  options?: { direction?: string; angle?: number },
+): string {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => createMonochromaticGradient(baseColor, steps, options), [
     baseColor,
     steps,
     JSON.stringify(options),

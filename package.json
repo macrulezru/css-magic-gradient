@@ -40,8 +40,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "build": "tsc"
+    "prepublishOnly": "npm run build && npm test",
+    "build": "tsc",
+    "test": "npm run build && node --test \"test/*.test.js\""
   },
   "keywords": [
     "css",
@@ -73,9 +74,12 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.3.0",
     "@types/vue": "^1.0.31",
     "@vue/reactivity": "^3.5.27",
     "@vue/runtime-core": "^3.5.27",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "typescript": "^5.0.0",
     "vue": "^3.5.27"
   }

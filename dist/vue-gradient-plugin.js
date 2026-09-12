@@ -6,6 +6,7 @@ exports.useMixedLinearGradient = useMixedLinearGradient;
 exports.useRadialGradient = useRadialGradient;
 exports.useConicGradient = useConicGradient;
 exports.useRainbowConicGradient = useRainbowConicGradient;
+exports.useHueWheelGradient = useHueWheelGradient;
 exports.useComplementaryGradient = useComplementaryGradient;
 exports.useTriadicGradient = useTriadicGradient;
 exports.useAnalogousGradient = useAnalogousGradient;
@@ -14,6 +15,7 @@ exports.useSplitComplementaryGradient = useSplitComplementaryGradient;
 exports.useTintGradient = useTintGradient;
 exports.useShadeGradient = useShadeGradient;
 exports.useToneGradient = useToneGradient;
+exports.useMonochromaticGradient = useMonochromaticGradient;
 exports.useAccessibleGradient = useAccessibleGradient;
 const runtime_core_1 = require("@vue/runtime-core");
 const linear_gradient_js_1 = require("./linear-gradient.js");
@@ -63,6 +65,12 @@ function useConicGradient(baseColor, options) {
  */
 function useRainbowConicGradient(options) {
     return (0, runtime_core_1.computed)(() => (0, conic_gradient_js_1.createRainbowConicGradient)(resolve(options)));
+}
+/**
+ * Reactive hue-rotating conic gradient from any base color.
+ */
+function useHueWheelGradient(baseColor, options) {
+    return (0, runtime_core_1.computed)(() => (0, presets_js_1.createHueWheelGradient)(resolve(baseColor), resolve(options)));
 }
 // ─── New harmony hooks ────────────────────────────────────────────────────────
 /**
@@ -114,6 +122,13 @@ function useShadeGradient(baseColor, steps = 5, options) {
 function useToneGradient(baseColor, steps = 5, options) {
     return (0, runtime_core_1.computed)(() => (0, presets_js_1.createToneGradient)(resolve(baseColor), resolve(steps), resolve(options)));
 }
+/**
+ * Reactive monochromatic gradient using `steps` shades of the base color,
+ * from lightest to darkest.
+ */
+function useMonochromaticGradient(baseColor, steps = 5, options) {
+    return (0, runtime_core_1.computed)(() => (0, presets_js_1.createMonochromaticGradient)(resolve(baseColor), resolve(steps), resolve(options)));
+}
 // ─── Accessibility hook ───────────────────────────────────────────────────────
 /**
  * Reactive accessible gradient that auto-adjusts stops until `textColor`
@@ -133,6 +148,7 @@ exports.default = {
         app.config.globalProperties.$useRadialGradient = useRadialGradient;
         app.config.globalProperties.$useConicGradient = useConicGradient;
         app.config.globalProperties.$useRainbowConicGradient = useRainbowConicGradient;
+        app.config.globalProperties.$useHueWheelGradient = useHueWheelGradient;
         app.config.globalProperties.$useComplementaryGradient = useComplementaryGradient;
         app.config.globalProperties.$useTriadicGradient = useTriadicGradient;
         app.config.globalProperties.$useAnalogousGradient = useAnalogousGradient;
@@ -141,6 +157,7 @@ exports.default = {
         app.config.globalProperties.$useTintGradient = useTintGradient;
         app.config.globalProperties.$useShadeGradient = useShadeGradient;
         app.config.globalProperties.$useToneGradient = useToneGradient;
+        app.config.globalProperties.$useMonochromaticGradient = useMonochromaticGradient;
         app.config.globalProperties.$useAccessibleGradient = useAccessibleGradient;
     },
 };

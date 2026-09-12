@@ -4,7 +4,7 @@ import { GradientOptions, CustomLinearGradientOptions } from './linear-gradient.
 import type { ColorStop } from './utils.js';
 import { RadialGradientOptions } from './radial-gradient.js';
 import { createRainbowConicGradient, ConicGradientOptions } from './conic-gradient.js';
-import { HarmonyGradientOptions } from './presets.js';
+import { createHueWheelGradient, HarmonyGradientOptions } from './presets.js';
 import { AccessibleGradientOptions } from './accessibility.js';
 /**
  * Reactive linear gradient. Returns a `ComputedRef<string>` that updates
@@ -37,6 +37,10 @@ export declare function useConicGradient(baseColor: string | Ref<string>, option
  * Reactive rainbow conic gradient.
  */
 export declare function useRainbowConicGradient(options?: Parameters<typeof createRainbowConicGradient>[0] | Ref<Parameters<typeof createRainbowConicGradient>[0] | undefined>): ComputedRef<string>;
+/**
+ * Reactive hue-rotating conic gradient from any base color.
+ */
+export declare function useHueWheelGradient(baseColor: string | Ref<string>, options?: Parameters<typeof createHueWheelGradient>[1] | Ref<Parameters<typeof createHueWheelGradient>[1] | undefined>): ComputedRef<string>;
 /**
  * Reactive complementary gradient.
  */
@@ -100,6 +104,17 @@ export declare function useToneGradient(baseColor: string | Ref<string>, steps?:
     direction?: string;
     angle?: number;
     gray?: string;
+} | undefined>): ComputedRef<string>;
+/**
+ * Reactive monochromatic gradient using `steps` shades of the base color,
+ * from lightest to darkest.
+ */
+export declare function useMonochromaticGradient(baseColor: string | Ref<string>, steps?: number | Ref<number>, options?: {
+    direction?: string;
+    angle?: number;
+} | Ref<{
+    direction?: string;
+    angle?: number;
 } | undefined>): ComputedRef<string>;
 /**
  * Reactive accessible gradient that auto-adjusts stops until `textColor`
