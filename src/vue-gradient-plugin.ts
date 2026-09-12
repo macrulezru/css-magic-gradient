@@ -21,6 +21,8 @@ import {
   createAnalogousGradient,
   createTetradicGradient,
   createSplitComplementaryGradient,
+  createMonochromaticGradient,
+  createHueWheelGradient,
   createTintGradient,
   createShadeGradient,
   createToneGradient,
@@ -101,6 +103,16 @@ export function useRainbowConicGradient(
   options?: Parameters<typeof createRainbowConicGradient>[0] | Ref<Parameters<typeof createRainbowConicGradient>[0] | undefined>,
 ): ComputedRef<string> {
   return computed(() => createRainbowConicGradient(resolve(options)));
+}
+
+/**
+ * Reactive hue-rotating conic gradient from any base color.
+ */
+export function useHueWheelGradient(
+  baseColor: string | Ref<string>,
+  options?: Parameters<typeof createHueWheelGradient>[1] | Ref<Parameters<typeof createHueWheelGradient>[1] | undefined>,
+): ComputedRef<string> {
+  return computed(() => createHueWheelGradient(resolve(baseColor), resolve(options)));
 }
 
 // ─── New harmony hooks ────────────────────────────────────────────────────────
@@ -190,6 +202,20 @@ export function useToneGradient(
   return computed(() => createToneGradient(resolve(baseColor), resolve(steps), resolve(options)));
 }
 
+/**
+ * Reactive monochromatic gradient using `steps` shades of the base color,
+ * from lightest to darkest.
+ */
+export function useMonochromaticGradient(
+  baseColor: string | Ref<string>,
+  steps: number | Ref<number> = 5,
+  options?: { direction?: string; angle?: number } | Ref<{ direction?: string; angle?: number } | undefined>,
+): ComputedRef<string> {
+  return computed(() =>
+    createMonochromaticGradient(resolve(baseColor), resolve(steps), resolve(options)),
+  );
+}
+
 // ─── Accessibility hook ───────────────────────────────────────────────────────
 
 /**
@@ -218,6 +244,7 @@ export default {
     app.config.globalProperties.$useRadialGradient = useRadialGradient;
     app.config.globalProperties.$useConicGradient = useConicGradient;
     app.config.globalProperties.$useRainbowConicGradient = useRainbowConicGradient;
+    app.config.globalProperties.$useHueWheelGradient = useHueWheelGradient;
     app.config.globalProperties.$useComplementaryGradient = useComplementaryGradient;
     app.config.globalProperties.$useTriadicGradient = useTriadicGradient;
     app.config.globalProperties.$useAnalogousGradient = useAnalogousGradient;
@@ -226,6 +253,7 @@ export default {
     app.config.globalProperties.$useTintGradient = useTintGradient;
     app.config.globalProperties.$useShadeGradient = useShadeGradient;
     app.config.globalProperties.$useToneGradient = useToneGradient;
+    app.config.globalProperties.$useMonochromaticGradient = useMonochromaticGradient;
     app.config.globalProperties.$useAccessibleGradient = useAccessibleGradient;
   },
 };

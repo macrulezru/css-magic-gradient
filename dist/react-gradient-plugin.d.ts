@@ -2,7 +2,7 @@ import { GradientOptions, CustomLinearGradientOptions } from './linear-gradient.
 import type { ColorStop } from './utils.js';
 import { RadialGradientOptions } from './radial-gradient.js';
 import { createRainbowConicGradient, ConicGradientOptions } from './conic-gradient.js';
-import { HarmonyGradientOptions } from './presets.js';
+import { createHueWheelGradient, HarmonyGradientOptions } from './presets.js';
 import { AccessibleGradientOptions } from './accessibility.js';
 /**
  * Returns a memoized CSS linear gradient string.
@@ -56,6 +56,14 @@ export declare function useConicGradient(baseColor: string, options?: ConicGradi
  * const gradient = useRainbowConicGradient({ steps: 24 });
  */
 export declare function useRainbowConicGradient(options?: Parameters<typeof createRainbowConicGradient>[0]): string;
+/**
+ * Returns a memoized hue-rotating conic gradient string from any base color.
+ * SSR-safe.
+ *
+ * @example
+ * const gradient = useHueWheelGradient('#3498db', { steps: 12 });
+ */
+export declare function useHueWheelGradient(baseColor: string, options?: Parameters<typeof createHueWheelGradient>[1]): string;
 /**
  * Returns a memoized complementary gradient string.
  * SSR-safe.
@@ -135,6 +143,18 @@ export declare function useToneGradient(baseColor: string, steps?: number, optio
     direction?: string;
     angle?: number;
     gray?: string;
+}): string;
+/**
+ * Returns a memoized monochromatic gradient using `steps` shades of the base
+ * color, from lightest to darkest.
+ * SSR-safe.
+ *
+ * @example
+ * const gradient = useMonochromaticGradient('#3498db', 7);
+ */
+export declare function useMonochromaticGradient(baseColor: string, steps?: number, options?: {
+    direction?: string;
+    angle?: number;
 }): string;
 /**
  * Returns a memoized accessible gradient that auto-adjusts stops so that

@@ -6,6 +6,7 @@ exports.useMixedLinearGradient = useMixedLinearGradient;
 exports.useRadialGradient = useRadialGradient;
 exports.useConicGradient = useConicGradient;
 exports.useRainbowConicGradient = useRainbowConicGradient;
+exports.useHueWheelGradient = useHueWheelGradient;
 exports.useComplementaryGradient = useComplementaryGradient;
 exports.useTriadicGradient = useTriadicGradient;
 exports.useAnalogousGradient = useAnalogousGradient;
@@ -14,6 +15,7 @@ exports.useSplitComplementaryGradient = useSplitComplementaryGradient;
 exports.useTintGradient = useTintGradient;
 exports.useShadeGradient = useShadeGradient;
 exports.useToneGradient = useToneGradient;
+exports.useMonochromaticGradient = useMonochromaticGradient;
 exports.useAccessibleGradient = useAccessibleGradient;
 const react_1 = require("react");
 const linear_gradient_js_1 = require("./linear-gradient.js");
@@ -107,6 +109,20 @@ function useConicGradient(baseColor, options) {
 function useRainbowConicGradient(options) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     return (0, react_1.useMemo)(() => (0, conic_gradient_js_1.createRainbowConicGradient)(options), [JSON.stringify(options)]);
+}
+/**
+ * Returns a memoized hue-rotating conic gradient string from any base color.
+ * SSR-safe.
+ *
+ * @example
+ * const gradient = useHueWheelGradient('#3498db', { steps: 12 });
+ */
+function useHueWheelGradient(baseColor, options) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return (0, react_1.useMemo)(() => (0, presets_js_1.createHueWheelGradient)(baseColor, options), [
+        baseColor,
+        JSON.stringify(options),
+    ]);
 }
 // ─── New harmony hooks ────────────────────────────────────────────────────────
 /**
@@ -220,6 +236,22 @@ function useShadeGradient(baseColor, steps = 5, options) {
 function useToneGradient(baseColor, steps = 5, options) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     return (0, react_1.useMemo)(() => (0, presets_js_1.createToneGradient)(baseColor, steps, options), [
+        baseColor,
+        steps,
+        JSON.stringify(options),
+    ]);
+}
+/**
+ * Returns a memoized monochromatic gradient using `steps` shades of the base
+ * color, from lightest to darkest.
+ * SSR-safe.
+ *
+ * @example
+ * const gradient = useMonochromaticGradient('#3498db', 7);
+ */
+function useMonochromaticGradient(baseColor, steps = 5, options) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return (0, react_1.useMemo)(() => (0, presets_js_1.createMonochromaticGradient)(baseColor, steps, options), [
         baseColor,
         steps,
         JSON.stringify(options),
